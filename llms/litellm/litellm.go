@@ -1,20 +1,20 @@
-package openai
+package litellm
 
 import (
 	"context"
 	"fmt"
+	litellmclient "github.com/tmc/langchaingo/llms/litellm/internal/openaiclient"
 
 	"github.com/tmc/langchaingo/callbacks"
 	"github.com/tmc/langchaingo/llms"
-	"github.com/tmc/langchaingo/llms/litellm/internal/openaiclient"
 	"github.com/tmc/langchaingo/schema"
 )
 
-type ChatMessage = openaiclient.ChatMessage
+type ChatMessage = litellmclient.ChatMessage
 
 type LLM struct {
 	CallbacksHandler callbacks.Handler
-	client           *openaiclient.Client
+	client           *litellmclient.Client
 }
 
 const (
@@ -96,7 +96,7 @@ func (o *LLM) GenerateContent(ctx context.Context, messages []llms.MessageConten
 
 		chatMsgs = append(chatMsgs, msg)
 	}
-	req := &openaiclient.ChatRequest{
+	req := &litellmclient.ChatRequest{
 		Model:            opts.Model,
 		StopWords:        opts.StopWords,
 		Messages:         chatMsgs,
@@ -107,7 +107,7 @@ func (o *LLM) GenerateContent(ctx context.Context, messages []llms.MessageConten
 		FrequencyPenalty: opts.FrequencyPenalty,
 		PresencePenalty:  opts.PresencePenalty,
 
-		FunctionCallBehavior: openaiclient.FunctionCallBehavior(opts.FunctionCallBehavior),
+		FunctionCallBehavior: litellmclient.FunctionCallBehavior(opts.FunctionCallBehavior),
 		Seed:                 opts.Seed,
 		Metadata:             opts.Metadata,
 		PromptTemplate:       opts.PromptTemplate,
@@ -118,9 +118,9 @@ func (o *LLM) GenerateContent(ctx context.Context, messages []llms.MessageConten
 
 	// since req.Functions is deprecated, we need to use the new Tools API.
 	for _, fn := range opts.Functions {
-		req.Tools = append(req.Tools, openaiclient.Tool{
+		req.Tools = append(req.Tools, litellmclient.Tool{
 			Type: "function",
-			Function: openaiclient.FunctionDefinition{
+			Function: litellmclient.FunctionDefinition{
 				Name:        fn.Name,
 				Description: fn.Description,
 				Parameters:  fn.Parameters,
@@ -190,7 +190,7 @@ func (o *LLM) GenerateContent(ctx context.Context, messages []llms.MessageConten
 
 // CreateEmbedding creates embeddings for the given input texts.
 func (o *LLM) CreateEmbedding(ctx context.Context, inputTexts []string) ([][]float32, error) {
-	embeddings, err := o.client.CreateEmbedding(ctx, &openaiclient.EmbeddingRequest{
+	embeddings, err := o.client.CreateEmbedding(ctx, &litellmclient.EmbeddingRequest{
 		Input: inputTexts,
 		Model: o.client.Model,
 	})
@@ -226,26 +226,26 @@ func ExtractToolParts(msg *ChatMessage) ([]llms.ContentPart, []llms.ToolCall) {
 }
 
 // toolFromTool converts an llms.Tool to a Tool.
-func toolFromTool(t llms.Tool) (openaiclient.Tool, error) {
-	tool := openaiclient.Tool{
-		Type: openaiclient.ToolType(t.Type),
+func toolFromTool(t llms.Tool) (litellmclient.Tool, error) {
+	tool := litellmclient.Tool{
+		Type: litellmclient.ToolType(t.Type),
 	}
 	switch t.Type {
-	case string(openaiclient.ToolTypeFunction):
-		tool.Function = openaiclient.FunctionDefinition{
+	case string(litellmclient.ToolTypeFunction):
+		tool.Function = litellmclient.FunctionDefinition{
 			Name:        t.Function.Name,
 			Description: t.Function.Description,
 			Parameters:  t.Function.Parameters,
 		}
 	default:
-		return openaiclient.Tool{}, fmt.Errorf("tool type %v not supported", t.Type)
+		return litellmclient.Tool{}, fmt.Errorf("tool type %v not supported", t.Type)
 	}
 	return tool, nil
 }
 
 // toolCallsFromToolCalls converts a slice of llms.ToolCall to a slice of ToolCall.
-func toolCallsFromToolCalls(tcs []llms.ToolCall) []openaiclient.ToolCall {
-	toolCalls := make([]openaiclient.ToolCall, len(tcs))
+func toolCallsFromToolCalls(tcs []llms.ToolCall) []litellmclient.ToolCall {
+	toolCalls := make([]litellmclient.ToolCall, len(tcs))
 	for i, tc := range tcs {
 		toolCalls[i] = toolCallFromToolCall(tc)
 	}
@@ -253,11 +253,11 @@ func toolCallsFromToolCalls(tcs []llms.ToolCall) []openaiclient.ToolCall {
 }
 
 // toolCallFromToolCall converts an llms.ToolCall to a ToolCall.
-func toolCallFromToolCall(tc llms.ToolCall) openaiclient.ToolCall {
-	return openaiclient.ToolCall{
+func toolCallFromToolCall(tc llms.ToolCall) litellmclient.ToolCall {
+	return litellmclient.ToolCall{
 		ID:   tc.ID,
-		Type: openaiclient.ToolType(tc.Type),
-		Function: openaiclient.ToolFunction{
+		Type: litellmclient.ToolType(tc.Type),
+		Function: litellmclient.ToolFunction{
 			Name:      tc.FunctionCall.Name,
 			Arguments: tc.FunctionCall.Arguments,
 		},

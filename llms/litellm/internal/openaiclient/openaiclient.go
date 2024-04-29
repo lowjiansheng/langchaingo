@@ -1,4 +1,4 @@
-package openaiclient
+package litellmclient
 
 import (
 	"context"

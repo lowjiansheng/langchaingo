@@ -1,4 +1,4 @@
-package openai
+package litellm
 
 import (
 	"github.com/tmc/langchaingo/callbacks"
@@ -13,12 +13,12 @@ const (
 	organizationEnvVarName = "OPENAI_ORGANIZATION" //nolint:gosec
 )
 
-type APIType openaiclient.APIType
+type APIType litellmclient.APIType
 
 const (
-	APITypeOpenAI  APIType = APIType(openaiclient.APITypeOpenAI)
-	APITypeAzure           = APIType(openaiclient.APITypeAzure)
-	APITypeAzureAD         = APIType(openaiclient.APITypeAzureAD)
+	APITypeOpenAI  APIType = APIType(litellmclient.APITypeOpenAI)
+	APITypeAzure           = APIType(litellmclient.APITypeAzure)
+	APITypeAzureAD         = APIType(litellmclient.APITypeAzureAD)
 )
 
 const (
@@ -31,7 +31,7 @@ type options struct {
 	baseURL      string
 	organization string
 	apiType      APIType
-	httpClient   openaiclient.Doer
+	httpClient   litellmclient.Doer
 
 	responseFormat *ResponseFormat
 
@@ -46,7 +46,7 @@ type options struct {
 type Option func(*options)
 
 // ResponseFormat is the response format for the OpenAI client.
-type ResponseFormat = openaiclient.ResponseFormat
+type ResponseFormat = litellmclient.ResponseFormat
 
 // ResponseFormatJSON is the JSON response format.
 var ResponseFormatJSON = &ResponseFormat{Type: "json_object"} //nolint:gochecknoglobals
@@ -110,7 +110,7 @@ func WithAPIVersion(apiVersion string) Option {
 
 // WithHTTPClient allows setting a custom HTTP client. If not set, the default value
 // is http.DefaultClient.
-func WithHTTPClient(client openaiclient.Doer) Option {
+func WithHTTPClient(client litellmclient.Doer) Option {
 	return func(opts *options) {
 		opts.httpClient = client
 	}
