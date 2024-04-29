@@ -58,6 +58,7 @@ type CallOptions struct {
 	// Deprecated: Use ToolChoice instead.
 	FunctionCallBehavior FunctionCallBehavior   `json:"function_call,omitempty"`
 	Metadata             map[string]interface{} `json:"metadata,omitempty"`
+	PromptTemplate       string                 `json:"prompt_template,omitempty"`
 }
 
 // Tool is a tool that can be used by the model.
@@ -252,6 +253,12 @@ func WithTools(tools []Tool) CallOption {
 func WithJSONMode() CallOption {
 	return func(o *CallOptions) {
 		o.JSONMode = true
+	}
+}
+
+func WithPromptTemplate(promptTemplate string) CallOption {
+	return func(o *CallOptions) {
+		o.PromptTemplate = promptTemplate
 	}
 }
 

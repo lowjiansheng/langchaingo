@@ -110,6 +110,7 @@ func (o *LLM) GenerateContent(ctx context.Context, messages []llms.MessageConten
 		FunctionCallBehavior: openaiclient.FunctionCallBehavior(opts.FunctionCallBehavior),
 		Seed:                 opts.Seed,
 		Metadata:             opts.Metadata,
+		PromptTemplate:       opts.PromptTemplate,
 	}
 	if opts.JSONMode {
 		req.ResponseFormat = ResponseFormatJSON
