@@ -62,6 +62,9 @@ type ChatRequest struct {
 
 	// Metadata allows you to specify additional information that will be passed to the model.
 	Metadata map[string]any `json:"metadata,omitempty"`
+
+	// UserID is the ID of the user making the request.
+	UserID string `json:"user_id,omitempty"`
 }
 
 // ToolType is the type of a tool.
