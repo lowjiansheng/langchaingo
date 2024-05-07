@@ -64,7 +64,7 @@ type ChatRequest struct {
 	Metadata map[string]any `json:"metadata,omitempty"`
 
 	// UserID is the ID of the user making the request.
-	UserID string `json:"user_id,omitempty"`
+	UserID string `json:"user,omitempty"`
 }
 
 // ToolType is the type of a tool.
