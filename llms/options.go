@@ -283,3 +283,11 @@ func WithResponseMIMEType(responseMIMEType string) CallOption {
 		o.ResponseMIMEType = responseMIMEType
 	}
 }
+
+// WithUser will add an option to set the user to use for the request.
+// This is used for LiteLLM's end_user tracking.
+func WithUser(user string) CallOption {
+	return func(o *CallOptions) {
+		o.User = user
+	}
+}
